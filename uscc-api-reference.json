@@ -1,0 +1,180 @@
+{
+  "base_url": "http://app.uscc.mn",
+  "base_url_https": "https://app.uscc.mn",
+  "description": "USCC (Улаанбаатар Smart Card) UBBus app API reference - Олдсон API-уудын нэгдсэн жагсаалт",
+  "source": "busroute_init.do HTML/JS эх код + Charles Proxy",
+  "apis": [
+    {
+      "id": "bus_list",
+      "name": "Автобусны одоогийн байршил",
+      "name_en": "Realtime bus positions",
+      "path": "/uscc/ubbus/busmap/bus_list.json",
+      "method": "GET",
+      "params": [
+        {
+          "name": "busroute_id",
+          "required": true,
+          "description": "Маршрутын ID (жишээ: 000000001)"
+        }
+      ],
+      "returns": {
+        "result_code": "001 = амжилттай, 002 = өгөгдөл байхгүй",
+        "list": "Автобусны жагсаалт - setBusMarkers() дээр ашиглагдана (lat, lng, bus_id г.м)"
+      },
+      "when_called": "Маршрут сонгох эсвэл 'Bus refresh' товч дарахад"
+    },
+    {
+      "id": "busstop_list",
+      "name": "Зогсоолын жагсаалт",
+      "name_en": "Bus stop list",
+      "path": "/uscc/ubbus/busmap/busstop_list.json",
+      "method": "GET",
+      "params": [
+        {
+          "name": "yyyymm",
+          "required": true,
+          "description": "Он сар YYYYMM формат (жишээ: 202503)"
+        },
+        {
+          "name": "today",
+          "required": true,
+          "description": "Өнөөдрийн огноо YYYYMMDD (жишээ: 20250317)"
+        }
+      ],
+      "returns": {
+        "result_code": "001 | 002",
+        "busstop_list": "busstop_id, busstop_nmmn, busstop_nmus, gps_coordinates зэрэг"
+      }
+    },
+    {
+      "id": "cardstation_list",
+      "name": "Карт цэнэглэх цэгүүд",
+      "name_en": "Card charging stations",
+      "path": "/uscc/ubbus/busmap/cardstation_list.json",
+      "method": "GET",
+      "params": [],
+      "returns": {
+        "result_code": "001 | 002",
+        "list": "Станцын жагсаалт"
+      }
+    },
+    {
+      "id": "search_busroutebus_list",
+      "name": "Зогсоолоор маршрут хайлт",
+      "name_en": "Search routes by bus stop",
+      "path": "/uscc/ubbus/busmap/search_busroutebus_list.json",
+      "method": "GET",
+      "params": [
+        {
+          "name": "busstop_id",
+          "required": true
+        },
+        {
+          "name": "yyyymm",
+          "required": true
+        },
+        {
+          "name": "today",
+          "required": true
+        }
+      ],
+      "returns": {
+        "result_code": "001 | 002",
+        "list": "busroute_id, busroute_no, bus_id, travle_time, stop_time, busstop_cnt"
+      }
+    },
+    {
+      "id": "search_busroutebusstop_list",
+      "name": "Маршрутын зогсоолууд",
+      "name_en": "Bus route stops",
+      "path": "/uscc/ubbus/busmap/search_busroutebusstop_list.json",
+      "method": "GET",
+      "params": [
+        {
+          "name": "busroute_id",
+          "required": true
+        },
+        {
+          "name": "all",
+          "required": false,
+          "value": "all"
+        }
+      ],
+      "returns": {
+        "result_code": "001 | 002",
+        "list": "Маршрутын зогсоолууд"
+      }
+    },
+    {
+      "id": "search_linecfg_list",
+      "name": "Маршрутын шугамын тохиргоо",
+      "name_en": "Line configuration for map drawing",
+      "path": "/uscc/ubbus/busmap/search_linecfg_list.json",
+      "method": "GET",
+      "params": [
+        {
+          "name": "busroute_id",
+          "required": true
+        },
+        {
+          "name": "all",
+          "required": false,
+          "value": "all"
+        }
+      ],
+      "returns": {
+        "result_code": "001 | 002",
+        "list": "infounitList - газрын зураг дээр шугам зурахад ашиглана"
+      }
+    },
+    {
+      "id": "busroute_init",
+      "name": "Газрын зураг хуудас",
+      "name_en": "Bus map page (HTML/JS)",
+      "path": "/uscc/ubbus/busmap/busroute_init.do",
+      "method": "GET",
+      "params": [
+        {
+          "name": "lang",
+          "required": false,
+          "description": "mn эсвэл en"
+        }
+      ],
+      "returns": "HTML хуудас (гол функцууд bus_list.json дуудна)"
+    },
+    {
+      "id": "app_version",
+      "name": "Апп хувилбар",
+      "name_en": "App version",
+      "path": "/uscc/ubbus/app_version.json",
+      "method": "GET",
+      "params": [],
+      "note": "Өмнөх ярилцлагаас"
+    }
+  ],
+  "example_requests": {
+    "bus_positions": "GET http://app.uscc.mn/uscc/ubbus/busmap/bus_list.json?busroute_id=000000001",
+    "bus_stops": "GET http://app.uscc.mn/uscc/ubbus/busmap/busstop_list.json?yyyymm=202503&today=20250317",
+    "search_routes": "GET http://app.uscc.mn/uscc/ubbus/busmap/search_busroutebus_list.json?busstop_id=XXX&yyyymm=202503&today=20250317"
+  },
+  "notes": [
+    "bus_list.json - автобусны realtime байршлын гол API",
+    "busroute_id-г search_busroutebus_list.json-аас авна",
+    "Хэрэглээний дараалал: зогсоол сонгох -> search_busroutebus_list -> search_busroutebusstop_list + search_linecfg_list + bus_list"
+  ],
+  "ssl_troubleshooting": {
+    "issue": "Fortinet Webfilter: SSL certificate expired",
+    "certificate": {
+      "cn": "*.uscc.mn",
+      "valid_from": "2025-03-14",
+      "valid_until": "2026-03-16",
+      "note": "Ихэнх тохиолдолд серверийн certificate дуусаагүй байдаг. Fortinet SSL inspection (MITM) эсвэл сүлжээний цагийн асуудал байж болно."
+    },
+    "workarounds": [
+      "HTTP ашиглах - ажилладаг: http://app.uscc.mn/...",
+      "Хувийн сүлжээ эсвэл мобайл hotspot ашиглах (Fortinet-аас гадуур)",
+      "Байгууллагын IT-д app.uscc.mn-ийг whitelist-д нэмэхийг хүсэх",
+      "UB Bus аппыг утсан дээр ашиглах (апп Charles Proxy-гүй ажиллана)"
+    ]
+  }
+}
